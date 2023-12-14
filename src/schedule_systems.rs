@@ -135,13 +135,8 @@ pub(crate) fn run_p2p<C: Config>(world: &mut World, mut sess: P2PSession<C>) {
 
     world.insert_resource(Session::P2P(sess));
 
-    match requests {
-        Some(Ok(requests)) => handle_requests(requests, world),
-        Some(Err(GgrsError::PredictionThreshold)) => {
-            info!("Skipping a frame: PredictionThreshold.")
-        }
-        Some(Err(e)) => warn!("{e}"),
-        None => {}
+    if let Some(requests) = requests {
+        handle_requests(requests, world)
     }
 }
 
