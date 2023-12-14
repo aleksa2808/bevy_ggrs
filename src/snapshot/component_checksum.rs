@@ -1,4 +1,4 @@
-use std::hash::{BuildHasher, Hash, Hasher};
+use std::hash::{Hash, Hasher};
 
 use bevy::prelude::*;
 
@@ -33,7 +33,7 @@ use crate::{ChecksumFlag, ChecksumPart, Rollback, RollbackOrdered, SaveWorld, Sa
 pub struct ComponentChecksumPlugin<C: Component>(pub for<'a> fn(&'a C) -> u64);
 
 fn default_hasher<C: Component + Hash>(component: &C) -> u64 {
-    let mut hasher = bevy::utils::FixedState.build_hasher();
+    let mut hasher = seahash::SeaHasher::new();
     component.hash(&mut hasher);
     hasher.finish()
 }
@@ -64,12 +64,12 @@ where
             &mut ChecksumPart,
             (Without<Rollback>, With<ChecksumFlag<C>>),
         >| {
-            let mut hasher = bevy::utils::FixedState.build_hasher();
+            let mut hasher = seahash::SeaHasher::new();
 
             let mut result = 0;
 
             for (&rollback, component) in components.iter() {
-                let mut hasher = hasher.clone();
+                let mut hasher = hasher;
 
                 // Hashing the rollback index ensures this hash is unique and stable
                 rollback_ordered.order(rollback).hash(&mut hasher);

@@ -1,4 +1,4 @@
-use std::hash::{BuildHasher, Hash, Hasher};
+use std::hash::{Hash, Hasher};
 
 use bevy::prelude::*;
 
@@ -33,7 +33,7 @@ use crate::{ChecksumFlag, ChecksumPart, Rollback, SaveWorld, SaveWorldSet};
 pub struct ResourceChecksumPlugin<R: Resource>(pub for<'a> fn(&'a R) -> u64);
 
 fn default_hasher<R: Resource + Hash>(resource: &R) -> u64 {
-    let mut hasher = bevy::utils::FixedState.build_hasher();
+    let mut hasher = seahash::SeaHasher::new();
     resource.hash(&mut hasher);
     hasher.finish()
 }

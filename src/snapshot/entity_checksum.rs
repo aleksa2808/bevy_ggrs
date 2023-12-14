@@ -1,4 +1,4 @@
-use std::hash::{BuildHasher, Hash, Hasher};
+use std::hash::{Hash, Hasher};
 
 use bevy::prelude::*;
 
@@ -14,13 +14,13 @@ impl EntityChecksumPlugin {
         active_entities: Query<&Rollback, (With<Rollback>, Without<ChecksumFlag<Entity>>)>,
         mut checksum: Query<&mut ChecksumPart, (Without<Rollback>, With<ChecksumFlag<Entity>>)>,
     ) {
-        let mut hasher = bevy::utils::FixedState.build_hasher();
+        let mut hasher = seahash::SeaHasher::new();
 
         // The quantity of active rollback entities must be synced.
-        active_entities.iter().len().hash(&mut hasher);
+        (active_entities.iter().len() as u64).hash(&mut hasher);
 
         // The quantity of total spawned rollback entities must be synced.
-        rollback_ordered.len().hash(&mut hasher);
+        (rollback_ordered.len() as u64).hash(&mut hasher);
 
         let result = ChecksumPart(hasher.finish() as u128);
 

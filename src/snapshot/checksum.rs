@@ -1,5 +1,5 @@
 use std::{
-    hash::{BuildHasher, Hash, Hasher},
+    hash::{Hash, Hasher},
     marker::PhantomData,
 };
 
@@ -28,7 +28,7 @@ pub struct ChecksumPart(pub u128);
 impl ChecksumPart {
     /// Converts a provided value `T` into a [Hash] using Bevy's [`FixedState`](`bevy::utils::FixedState`) hasher.
     pub fn from_value<T: Hash>(value: &T) -> Self {
-        let mut hasher = bevy::utils::FixedState.build_hasher();
+        let mut hasher = seahash::SeaHasher::new();
 
         value.hash(&mut hasher);
 
