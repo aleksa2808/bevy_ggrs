@@ -5,7 +5,7 @@ use std::{
 
 use bevy::prelude::*;
 
-use crate::{SaveWorld, SaveWorldSet};
+use crate::{checksum_hasher, SaveWorld, SaveWorldSet};
 
 /// Flags an entity as containing a checksum for a type `T`
 #[derive(Component)]
@@ -26,9 +26,9 @@ impl<T> Default for ChecksumFlag<T> {
 pub struct ChecksumPart(pub u128);
 
 impl ChecksumPart {
-    /// Converts a provided value `T` into a [Hash] using Bevy's [`FixedState`](`bevy::utils::FixedState`) hasher.
+    /// Converts a provided value `T` into a [Hash] using [`checksum_hasher`].
     pub fn from_value<T: Hash>(value: &T) -> Self {
-        let mut hasher = seahash::SeaHasher::new();
+        let mut hasher = checksum_hasher();
 
         value.hash(&mut hasher);
 

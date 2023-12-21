@@ -1,6 +1,7 @@
 use crate::{ConfirmedFrameCount, Rollback, DEFAULT_FPS};
 use bevy::{prelude::*, utils::HashMap};
-use std::{collections::VecDeque, marker::PhantomData};
+use seahash::SeaHasher;
+use std::{collections::VecDeque, hash::Hasher, marker::PhantomData};
 
 mod checksum;
 mod component_checksum;
@@ -237,4 +238,9 @@ impl<For, As> GgrsComponentSnapshot<For, As> {
     pub fn iter(&self) -> impl Iterator<Item = (&Rollback, &As)> + '_ {
         self.snapshot.iter()
     }
+}
+
+/// Returns a hasher appropriate for creating checksums
+pub fn checksum_hasher() -> impl Hasher + Clone {
+    SeaHasher::new()
 }
