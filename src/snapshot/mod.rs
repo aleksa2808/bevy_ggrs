@@ -1,7 +1,7 @@
 use crate::{ConfirmedFrameCount, Rollback, DEFAULT_FPS};
 use bevy::{prelude::*, utils::HashMap};
 use seahash::SeaHasher;
-use std::{collections::VecDeque, hash::Hasher, marker::PhantomData};
+use std::{collections::VecDeque, marker::PhantomData};
 
 mod checksum;
 mod component_checksum;
@@ -240,7 +240,7 @@ impl<For, As> GgrsComponentSnapshot<For, As> {
     }
 }
 
-/// Returns a hasher appropriate for creating checksums
-pub fn checksum_hasher() -> impl Hasher + Clone {
+/// Returns a hasher built using the `seahash` library appropriate for creating portable checksums.
+pub fn checksum_hasher() -> SeaHasher {
     SeaHasher::new()
 }
